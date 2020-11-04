@@ -1,5 +1,11 @@
 import TransactionsRepository from '../repositories/TransactionsRepository';
 import Transaction from '../models/Transaction';
+import { Balance } from '../dtos/Balance';
+
+interface IGetTransactions {
+  transactions: Transaction[];
+  balance: Balance;
+}
 
 class CreateTransactionService {
   private transactionsRepository: TransactionsRepository;
@@ -8,10 +14,12 @@ class CreateTransactionService {
     this.transactionsRepository = transactionsRepository;
   }
 
-  public execute(data: Omit<Transaction, 'id'>): Transaction {
-    const transaction = this.transactionsRepository.create(data);
+  public execute(): IGetTransactions {
+    const transactions = this.transactionsRepository.all();
 
-    return transaction;
+    const balance = this.transactionsRepository.getBalance(transactions);
+
+    return { transactions, balance };
   }
 }
 
